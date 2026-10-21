@@ -27,3 +27,47 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  logtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add Wazuh apt repository
+        run: |
+          curl -fsSL https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/wazuh.gpg --import
+          sudo chmod 644 /usr/share/keyrings/wazuh.gpg
+          echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | sudo tee /etc/apt/sources.list.d/wazuh.list
+          sudo apt-get update
+
+      - name: Install Wazuh manager 4.12.0 (same version as the lab)
+        run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y wazuh-manager=4.12.0-1
+
+      - name: Deploy custom decoder and rules
+        run: |
+          sudo install -o wazuh -g wazuh -m 660 decoders/mysql_custom_decoders.xml /var/ossec/etc/decoders/mysql_custom_decoders.xml
+          sudo install -o wazuh -g wazuh -m 660 rules/mysql_custom_rules.xml /var/ossec/etc/rules/mysql_custom_rules.xml
+
+      - name: Start Wazuh manager
+        run: |
+          sudo systemctl restart wazuh-manager
+          for i in $(seq 1 30); do
+            if sudo /var/ossec/bin/wazuh-control status | grep -q "wazuh-analysisd is running"; then break; fi
+            sleep 2
+          done
+          sudo /var/ossec/bin/wazuh-control status
+
+      - name: Wait for logtest to be ready
+        run: |
+          for i in $(seq 1 30); do
+            if echo "test" | sudo /var/ossec/bin/wazuh-logtest 2>&1 | grep -q "Phase 1"; then exit 0; fi
+            sleep 2
+          done
+          echo "logtest did not become ready"; exit 1
+
+      - name: Run logtest checks
+        run: ./scripts/logtest.sh
+
+      - name: Show Wazuh logs on failure
+        if: failure()
+        run: sudo tail -n 100 /var/ossec/logs/ossec.log
