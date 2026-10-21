@@ -1,0 +1,10 @@
+<decoder name="mysql_custom">
+    <prematch>Access denied for user</prematch>
+</decoder>
+
+<decoder name="mysql_custom_auth_failure">
+    <parent>mysql_custom</parent>
+    <regex type="pcre2">Access denied for user '([^']+)'@'([^']+)'</regex>
+    <order>srcuser,srcip</order>
+    <use_own_name>true</use_own_name>
+</decoder>
