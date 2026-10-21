@@ -133,7 +133,9 @@ To test rule `100201`, run `sudo /var/ossec/bin/wazuh-logtest` and submit all fi
 - `scripts/logtest.sh`: run on a Wazuh Manager with the custom decoder and
   rules installed. Verifies that one failure triggers only rule 100200, five
   failures from one IP trigger rule 100201, and five failures from five
-  different IPs do not. Not run in CI because it needs a running Wazuh Manager.
+  different IPs do not. In CI it runs against a Wazuh Manager 4.12.0
+  installed on the GitHub runner; it can also be run manually on a lab
+  Wazuh Manager.
 
 ## Limitations
 
