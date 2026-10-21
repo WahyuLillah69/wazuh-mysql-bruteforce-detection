@@ -50,20 +50,32 @@ jobs:
 
       - name: Start Wazuh manager
         run: |
-          sudo systemctl restart wazuh-manager
+          sudo systemctl restart wazuh-manager || echo "systemctl restart returned non-zero; verifying daemons directly"
           for i in $(seq 1 30); do
-            if sudo /var/ossec/bin/wazuh-control status | grep -q "wazuh-analysisd is running"; then break; fi
+            status=$(sudo /var/ossec/bin/wazuh-control status 2>&1 || true)
+            if grep -q "wazuh-analysisd is running" <<<"$status"; then
+              echo "$status"
+              exit 0
+            fi
             sleep 2
           done
-          sudo /var/ossec/bin/wazuh-control status
+          echo "$status"
+          echo "wazuh-analysisd did not start"
+          exit 1
 
       - name: Wait for logtest to be ready
         run: |
           for i in $(seq 1 30); do
-            if echo "test" | sudo /var/ossec/bin/wazuh-logtest 2>&1 | grep -q "Phase 1"; then exit 0; fi
+            out=$(echo "test" | sudo /var/ossec/bin/wazuh-logtest 2>&1 || true)
+            if grep -q "Phase 1" <<<"$out"; then
+              echo "logtest ready"
+              exit 0
+            fi
             sleep 2
           done
-          echo "logtest did not become ready"; exit 1
+          echo "$out"
+          echo "logtest did not become ready"
+          exit 1
 
       - name: Run logtest checks
         run: ./scripts/logtest.sh
