@@ -2,8 +2,6 @@
 
 ![validate](https://github.com/WahyuLillah69/wazuh-mysql-bruteforce-detection/actions/workflows/validate.yml/badge.svg)
 
-![validate](https://github.com/WahyuLillah69/wazuh-mysql-bruteforce-detection/actions/workflows/validate.yml/badge.svg)
-
 A security monitoring and detection engineering project that identifies
 repeated MySQL authentication failures using a custom Wazuh decoder and
 correlation rules.
