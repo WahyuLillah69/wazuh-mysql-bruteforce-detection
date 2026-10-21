@@ -43,3 +43,16 @@ Mean: 4.584 seconds.
   is not fully controlled.
 
 See [limitations](../docs/limitations.md) for the caveats on this comparison.
+
+## Alert counts
+
+70 failed authentications were recorded in the MySQL log per configuration
+(S2: 20, S3: 25, S4: 25; S1 and S5 produce none).
+
+| Configuration | Single-failure alerts | Brute-force alerts (rule 100201) |
+|---|---:|---:|
+| Baseline | 70 (rule 50106) | 0 |
+| Custom | 65 (rule 100200) | 5 |
+
+In custom S3, the fifth failure of each run is reported as rule 100201
+instead of 100200 (20 + 5 = 25).

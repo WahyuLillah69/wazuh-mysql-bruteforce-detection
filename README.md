@@ -70,6 +70,10 @@ alerts do not count as brute-force detections.
 False positive rate (FPR) is measured across 20 non-attack test cases
 per configuration.
 
+Only S2 and S4 produce failed logins; S1 and S5 contain successful logins
+only. The informative false-positive evidence therefore comes from 10 of the
+20 non-attack runs. See [limitations](docs/limitations.md).
+
 | Metric | Baseline | Custom |
 |---|---:|---:|
 | Brute-force detection rate | 0% (0/5) | 100% (5/5) |
