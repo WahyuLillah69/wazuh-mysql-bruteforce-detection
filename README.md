@@ -2,6 +2,8 @@
 
 ![validate](https://github.com/WahyuLillah69/wazuh-mysql-bruteforce-detection/actions/workflows/validate.yml/badge.svg)
 
+![validate](https://github.com/WahyuLillah69/wazuh-mysql-bruteforce-detection/actions/workflows/validate.yml/badge.svg)
+
 A security monitoring and detection engineering project that identifies
 repeated MySQL authentication failures using a custom Wazuh decoder and
 correlation rules.
@@ -109,6 +111,8 @@ See `results/comparison.md` and `docs/limitations.md` for further details.
 - `docs/`: Detection logic, MITRE ATT&CK mapping, and limitations.
 - `scripts/`: Validation and logtest scripts.
 - `.github/workflows/`: CI workflow.
+- `scripts/`: Validation and logtest scripts.
+- `.github/workflows/`: CI workflow.
 
 ## Testing
 
@@ -123,6 +127,15 @@ Verify the decoded fields and matched rule. Rule `100201` requires the
 configured frequency and time-window conditions to be satisfied.
 
 To test rule `100201`, run `sudo /var/ossec/bin/wazuh-logtest` and submit all five lines from `tests/sample-logs/mysql-bruteforce-5-events.log` in the same session. The brute-force rule should match on the fifth event.
+
+## Automated Checks
+
+- `scripts/validate.sh` (also run by GitHub Actions): XML well-formedness,
+  rule ID uniqueness and range, rule 100201 parameters, sample log shape.
+- `scripts/logtest.sh`: run on a Wazuh Manager with the custom decoder and
+  rules installed. Verifies that one failure triggers only rule 100200, five
+  failures from one IP trigger rule 100201, and five failures from five
+  different IPs do not. Not run in CI because it needs a running Wazuh Manager.
 
 ## Automated Checks
 
