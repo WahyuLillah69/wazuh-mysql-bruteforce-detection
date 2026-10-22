@@ -13,8 +13,8 @@
   with this in mind.
 - A 100% detection rate applies only to the defined ground truth (five
   failures within 60 s from the same IP), not to other brute-force variants.
-- Mean detection time (4.584 s) is about 91% attack duration (4.163 s) and
-  9% Wazuh latency (0.421 s), so it depends on the roughly 1 s attempt interval.
+- Mean detection time (4.584 s) is about 90.8% attack duration (4.163 s) and
+  9.2% Wazuh latency (0.421 s), so it depends on the roughly 1 s attempt interval.
 
 ## Comparison validity
 - Baseline (`mysql_log`) and custom (`syslog`) tests ran on different days
